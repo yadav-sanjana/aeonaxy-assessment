@@ -5,34 +5,32 @@ export const UserController = {
     async getUsers(_res, res) {
         try {
             const userList = await UserModel.findAll({});
-            // const userList = "hellp"
-            console.log(userList);
             res.send(userList);
         } catch (error) {
             console.error('Error fetching users:', error);
             res.status(500).json({ error: 'Internal server error' });
         }
     },
-    // async registerUser(req, res) {
-    //     try {
-    //                 const { name, email, password } = req.body;
+    async registerUser(req, res) {
+        try {
+                    const { name, email, password } = req.body;
             
-    //                 // Check if the email is already registered
-    //                 const existingUser = await UserModel.findOne({ where: { email } });
-    //                 if (existingUser) {
-    //                     res.status(400).json({ error: 'Email is already registered' });
-    //                     return;
-    //                 }
+                    // Check if the email is already registered
+                    const existingUser = await UserModel.findOne({ where: { email } });
+                    if (existingUser) {
+                        res.status(400).json({ error: 'Email is already registered' });
+                        return;
+                    }
             
-    //                 // Create new user
-    //                 const newUser = await UserModel.create({ name, email, password });
+                    // Create new user
+                    const newUser = await UserModel.create({ name, email, password });
             
-    //                 res.status(201).json(newUser);
-    //             } catch (error) {
-    //                 console.error('Error registering user:', error);
-    //                 res.status(500).json({ error: 'Internal server error' });
-    //             }
-    // },
+                    res.status(201).json(newUser);
+                } catch (error) {
+                    console.error('Error registering user:', error);
+                    res.status(500).json({ error: 'Internal server error' });
+                }
+    },
 }
 
 

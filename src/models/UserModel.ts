@@ -7,7 +7,7 @@ export const UserModel = db.define("user", {
         primaryKey: true,
         autoIncrement: true
     },
-    username: {
+    name: {
         type: DataTypes.STRING,
         allowNull: false
     },
@@ -16,6 +16,10 @@ export const UserModel = db.define("user", {
         allowNull: false,
         unique: true
     },
+    password : {
+        type : DataTypes.STRING,
+        allowNull : false
+    }
 }, {
     timestamps: true,
     force: true

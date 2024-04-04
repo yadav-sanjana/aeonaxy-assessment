@@ -12,5 +12,6 @@ router.get('/', (req, res) => {
     });
 });
 router.get('/user', userController_1.UserController.getUsers);
+router.post('/user', userController_1.UserController.registerUser);
 exports.default = router;
 //# sourceMappingURL=index.js.map

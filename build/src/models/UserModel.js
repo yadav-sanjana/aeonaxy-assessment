@@ -9,7 +9,7 @@ exports.UserModel = db_1.db.define("user", {
         primaryKey: true,
         autoIncrement: true
     },
-    username: {
+    name: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false
     },
@@ -18,6 +18,10 @@ exports.UserModel = db_1.db.define("user", {
         allowNull: false,
         unique: true
     },
+    password: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false
+    }
 }, {
     timestamps: true,
     force: true

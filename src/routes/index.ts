@@ -10,6 +10,7 @@ router.get('/',  (req, res) => {
 })
 
 router.get('/user', UserController.getUsers)
+router.post('/user', UserController.registerUser)
 
 
 export default router

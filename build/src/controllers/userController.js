@@ -16,8 +16,6 @@ exports.UserController = {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const userList = yield UserModel_1.UserModel.findAll({});
-                // const userList = "hellp"
-                console.log(userList);
                 res.send(userList);
             }
             catch (error) {
@@ -26,23 +24,26 @@ exports.UserController = {
             }
         });
     },
-    // async registerUser(req, res) {
-    //     try {
-    //                 const { name, email, password } = req.body;
-    //                 // Check if the email is already registered
-    //                 const existingUser = await UserModel.findOne({ where: { email } });
-    //                 if (existingUser) {
-    //                     res.status(400).json({ error: 'Email is already registered' });
-    //                     return;
-    //                 }
-    //                 // Create new user
-    //                 const newUser = await UserModel.create({ name, email, password });
-    //                 res.status(201).json(newUser);
-    //             } catch (error) {
-    //                 console.error('Error registering user:', error);
-    //                 res.status(500).json({ error: 'Internal server error' });
-    //             }
-    // },
+    registerUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { name, email, password } = req.body;
+                // Check if the email is already registered
+                const existingUser = yield UserModel_1.UserModel.findOne({ where: { email } });
+                if (existingUser) {
+                    res.status(400).json({ error: 'Email is already registered' });
+                    return;
+                }
+                // Create new user
+                const newUser = yield UserModel_1.UserModel.create({ name, email, password });
+                res.status(201).json(newUser);
+            }
+            catch (error) {
+                console.error('Error registering user:', error);
+                res.status(500).json({ error: 'Internal server error' });
+            }
+        });
+    },
 };
 // // const getUsers = async (req, res) => {
 // //     const userList = await UserModel.findAll({})
