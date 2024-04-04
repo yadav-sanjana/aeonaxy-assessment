@@ -3,10 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CourseModel = void 0;
 const sequelize_1 = require("sequelize");
 const db_1 = require("../config/db");
-exports.CourseModel = db_1.db.define({
+exports.CourseModel = db_1.db.define("course", {
     id: {
         type: sequelize_1.DataTypes.INTEGER,
-        autoincrement: true,
+        autoIncrement: true,
         allowNull: false,
         primaryKey: true
     },

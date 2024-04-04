@@ -1,10 +1,10 @@
 import { DataTypes } from "sequelize";
 import { db } from "../config/db";
 
-export const CourseModel = db.define({
+export const CourseModel = db.define("course", {
     id: {
         type: DataTypes.INTEGER,
-        autoincrement: true,
+        autoIncrement: true,
         allowNull: false,
         primaryKey: true
     },

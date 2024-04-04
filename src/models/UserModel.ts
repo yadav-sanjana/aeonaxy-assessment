@@ -1,11 +1,11 @@
 import { DataTypes } from "sequelize";
 import { db } from "../config/db";
 
-export const UserModel = db.define({
+export const UserModel = db.define("user", {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoincrement: true
+        autoIncrement: true
     },
     username: {
         type: DataTypes.STRING,
@@ -17,6 +17,6 @@ export const UserModel = db.define({
         unique: true
     },
 }, {
-    tableName: "user",
-    timestamps: true
+    timestamps: true,
+    force: true
 })

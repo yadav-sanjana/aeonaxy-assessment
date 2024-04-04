@@ -10,12 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
+const UserModel_1 = require("../models/UserModel");
 exports.UserController = {
     getUsers(_res, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // const userList = await UserModel.findAll({});
-                const userList = "hellp";
+                const userList = yield UserModel_1.UserModel.findAll({});
+                // const userList = "hellp"
                 console.log(userList);
                 res.send(userList);
             }
@@ -24,7 +25,24 @@ exports.UserController = {
                 res.status(500).json({ error: 'Internal server error' });
             }
         });
-    }
+    },
+    // async registerUser(req, res) {
+    //     try {
+    //                 const { name, email, password } = req.body;
+    //                 // Check if the email is already registered
+    //                 const existingUser = await UserModel.findOne({ where: { email } });
+    //                 if (existingUser) {
+    //                     res.status(400).json({ error: 'Email is already registered' });
+    //                     return;
+    //                 }
+    //                 // Create new user
+    //                 const newUser = await UserModel.create({ name, email, password });
+    //                 res.status(201).json(newUser);
+    //             } catch (error) {
+    //                 console.error('Error registering user:', error);
+    //                 res.status(500).json({ error: 'Internal server error' });
+    //             }
+    // },
 };
 // // const getUsers = async (req, res) => {
 // //     const userList = await UserModel.findAll({})

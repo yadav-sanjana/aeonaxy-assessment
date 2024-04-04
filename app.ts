@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 // Test database connection
 async function testDBConnection() {
     try {
-        db.sync({ force: false, alter: true })
+        db.sync({ force: true, alter: true })
         db
             .authenticate()
             .then(() => {

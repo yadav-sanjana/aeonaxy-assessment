@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
 function testDBConnection() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            db_1.db.sync({ force: false, alter: true });
+            db_1.db.sync({ force: true, alter: true });
             db_1.db
                 .authenticate()
                 .then(() => {
