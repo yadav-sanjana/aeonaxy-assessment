@@ -111,6 +111,7 @@
     "app.ts"
   ],
   "exclude": [
-    "build/**/*"
+    "build/**/*",
+    "build"
   ]
 }

@@ -1,6 +1,8 @@
 const { Sequelize } = require('sequelize');
+require('dotenv').config();
+const dbUrl = process.env.DB_URL
 
-export const db = new Sequelize('postgresql://aeonaxy-db_owner:npjdOX50ubMU@ep-mute-butterfly-a5nlu3gt.us-east-2.aws.neon.tech/aeonaxy-db?sslmode=require', {
+export const db = new Sequelize(dbUrl, {
     host: 'localhost',
     dialect: 'postgres'
 })

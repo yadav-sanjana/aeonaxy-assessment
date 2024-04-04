@@ -17,5 +17,6 @@ export const UserModel = db.define({
         unique: true
     },
 }, {
-    tableName: "user"
+    tableName: "user",
+    timestamps: true
 })

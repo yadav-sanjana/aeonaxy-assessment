@@ -19,6 +19,7 @@ exports.UserModel = db_1.db.define({
         unique: true
     },
 }, {
-    tableName: "user"
+    tableName: "user",
+    timestamps: true
 });
 //# sourceMappingURL=UserModel.js.map
