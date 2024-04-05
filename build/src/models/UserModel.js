@@ -25,6 +25,11 @@ exports.UserModel = db_1.db.define("user", {
     profile_pic: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: true
+    },
+    status: {
+        type: sequelize_1.DataTypes.ENUM,
+        values: ["active", "inactive", "suspended", "deleted"],
+        default: "active"
     }
 }, {
     timestamps: true,

@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import { db } from "../config/db";
 
-export const CourseModel = db.define("course", {
+export const CourseModel = db.define("Course", {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -23,7 +23,39 @@ export const CourseModel = db.define("course", {
     level: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    duration: {
+        type: DataTypes.STRING,
+         allowNull: true
+    },
+    instructor: {
+        type: DataTypes.STRING, 
+         allowNull: true
+    },
+    price: {
+        type: DataTypes.FLOAT, 
+        allowNull: true
+    },
+    rating: {
+        type: DataTypes.FLOAT,
+        allowNull: true
+    },
+    studentsEnrolled: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
+    lessons: {
+        type: DataTypes.JSON, 
+         allowNull: true
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false
     }
 }, {
-    tableName: 'course'
-})
+    tableName: 'courses'
+});

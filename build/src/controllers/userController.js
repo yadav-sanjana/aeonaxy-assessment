@@ -39,7 +39,7 @@ exports.UserController = {
             }
         });
     },
-    //get user by token (JWT)
+    //get user by token (JWT) login system
     // pass
     // get user lists
     getUsers(req, res) {
@@ -152,6 +152,46 @@ exports.UserController = {
             catch (error) {
                 console.error('Error updating user:', error);
                 res.status(500).send({ error: 'Internal server error' });
+            }
+        });
+    },
+    //change user status "active/inactive/suspended/deleted"
+    changeUserStatus(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const id = req.params.id;
+                const { status } = req.body;
+                // Check if the provided status is valid
+                const validStatus = ["active", "inactive", "suspended", "deleted"];
+                if (!validStatus.includes(status)) {
+                    return res.status(400).send({
+                        error: 'Invalid status provided'
+                    });
+                }
+                // Find the user by userId
+                const user = yield UserModel_1.UserModel.findOne({
+                    where: {
+                        id
+                    }
+                });
+                if (!user) {
+                    return res.status(404).send({
+                        error: 'User not found'
+                    });
+                }
+                // Update the user status
+                user.status = status;
+                yield user.save();
+                res.status(200).send({
+                    message: 'User status updated successfully',
+                    user
+                });
+            }
+            catch (error) {
+                console.error('Error updating user status:', error);
+                res.status(500).send({
+                    error: 'Internal server error'
+                });
             }
         });
     }

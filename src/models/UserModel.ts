@@ -23,6 +23,11 @@ export const UserModel = db.define("user", {
     profile_pic : {
         type : DataTypes.STRING,
         allowNull : true
+    },
+    status : {
+        type : DataTypes.ENUM,
+        values : ["active", "inactive", "suspended", "deleted"],
+        default : "active"
     }
 }, {
     timestamps: true,
