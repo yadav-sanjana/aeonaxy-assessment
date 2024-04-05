@@ -15,8 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const db_1 = require("./src/config/db");
 const routes_1 = __importDefault(require("./src/routes"));
-require('dotenv').config();
+const dotenv_1 = __importDefault(require("dotenv"));
 const cors_1 = __importDefault(require("cors"));
+dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT;
 app.use(express_1.default.json());
@@ -30,7 +31,7 @@ app.get('/', (req, res) => {
 function testDBConnection() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            db_1.db.sync({ force: true, alter: true });
+            db_1.db.sync({ force: false, alter: true });
             db_1.db
                 .authenticate()
                 .then(() => {

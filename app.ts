@@ -1,9 +1,10 @@
 import express from 'express'
 import { db } from "./src/config/db";
 import router from './src/routes';
-require('dotenv').config();
+import dotenv from 'dotenv';
 import cors from 'cors'
 
+dotenv.config();
 const app = express();
 const port = process.env.PORT
 app.use(express.json())
@@ -19,7 +20,7 @@ app.get('/', (req, res) => {
 // Test database connection
 async function testDBConnection() {
     try {
-        db.sync({ force: true, alter: true })
+        db.sync({ force: false, alter: true })
         db
             .authenticate()
             .then(() => {

@@ -19,8 +19,11 @@ export const UserModel = db.define("user", {
     password : {
         type : DataTypes.STRING,
         allowNull : false
+    },
+    profile_pic : {
+        type : DataTypes.STRING,
+        allowNull : true
     }
 }, {
     timestamps: true,
-    force: true
 })

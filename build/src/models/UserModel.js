@@ -21,9 +21,12 @@ exports.UserModel = db_1.db.define("user", {
     password: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false
+    },
+    profile_pic: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: true
     }
 }, {
     timestamps: true,
-    force: true
 });
 //# sourceMappingURL=UserModel.js.map
