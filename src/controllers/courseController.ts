@@ -1,3 +1,4 @@
+import { where } from 'sequelize';
 import { CourseModel } from '../models/CourseModel';
 import { Request } from 'express'
 
@@ -11,7 +12,7 @@ interface CourseInput {
     price?: number;
     rating?: number;
     studentsEnrolled?: number;
-    lessons?: any[]; 
+    lessons?: any[];
 }
 
 // Create Course
@@ -35,7 +36,9 @@ export const CourseController = {
 
             res.status(201).send(newCourse)
         } catch (error) {
-
+            res.status(500).send({
+                message: 'Internal server error'
+            });
         }
 
     },
@@ -101,12 +104,32 @@ export const CourseController = {
 
     // Update Course
     async updateCourse(req, res) {
-        // pass
-    },
+        try {
+            const id = req.params.id
+            const updatedFields = req.body
+            let updatedCourse = await CourseModel.findOne({
+                where: {
+                    id
+                }
+            });
 
-    // Delete Course
-    async deleteCourse(req, res) {
-        // pass
+            if (!updatedCourse) {
+                return res.status(404).send({
+                    message: 'Course not found'
+                });
+            }
+
+            // Updating course with req.body fields
+            await updatedCourse.update(updatedFields);
+
+            res.status(200).send({
+                message: "Course updated successfully"
+            });
+        } catch (error) {
+            res.status(500).send({
+                message: 'Internal server error'
+            });
+        }
     }
 
 }

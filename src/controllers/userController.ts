@@ -1,5 +1,10 @@
+import { where } from 'sequelize';
+import { UserCourse } from '../models/UserCourseModel';
 import { UserModel } from '../models/UserModel';
 import { v2 as cloudinary } from 'cloudinary';
+import generateJwtToken from '../middlewares/auth';
+import { CourseModel } from '../models/CourseModel';
+import { sendCourseEnrolled, sendRegistered } from '../utils/notificationFunctions';
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/
 
@@ -30,7 +35,53 @@ export const UserController = {
     },
 
     //get user by token (JWT) login system
-    // pass
+    async userByToken(req, res) {
+        const id = req.sqlUID
+
+        const userDetail = await UserModel.findOne({
+            where: {
+                id
+            }
+        })
+
+        if (!userDetail) {
+            return res.status(404).send({
+                error: "User not Exists"
+            })
+        }
+
+        res.status(200).send(userDetail)
+    },
+
+    //generating jwt token for backend purpose
+    async getUserToken(req, res) {
+        const email = req.params.email
+        try {
+            const exist = await UserModel.findOne({
+                where: {
+                    email
+                }
+            })
+            if (!exist) {
+                return res.status(404).send({
+                    message: "User not found"
+                })
+
+            }
+
+            const token = generateJwtToken(exist?.get("id"), exist?.get("email"))
+
+            res.send({
+                user: exist,
+                token: token
+            })
+        } catch (error) {
+            console.log(error, "error occured")
+            res.status(500).send({
+                error: "Something went wrong"
+            })
+        }
+    },
 
     // get user lists
     async getUsers(req, res) {
@@ -99,6 +150,8 @@ export const UserController = {
                 profile_pic: imageUrl
             });
 
+            sendRegistered(email, name)
+
             res.status(201).send(newUser);
         } catch (error) {
             console.error('Error registering user:', error);
@@ -111,7 +164,7 @@ export const UserController = {
     //update existing user
     async updateUser(req, res) {
         try {
-            const id = req.params.id;
+            const id = req.query.id || req.sqlUID;
             const { name, password } = req.body;
             let imageUrl = '';
 
@@ -197,4 +250,89 @@ export const UserController = {
         }
     }
 
+}
+
+export const UserEnrollment = {
+    async enrollmentUser(req, res) {
+        try {
+            const { courseId } = req.body;
+            const userId = req.sqlUID
+
+            // Check if the user is already enrolled in the course
+            const existingEnrollment = await UserCourse.findOne({
+                where: {
+                    userId,
+                    courseId
+                }
+            });
+            if (existingEnrollment) {
+                return res.status(400).send({
+                    message: 'User is already enrolled in this course'
+                });
+            }
+
+            //enrollment
+            await UserCourse.create({
+                userId,
+                courseId
+            });
+
+            const enrollmentDetail = await UserCourse.findOne({
+                where: {
+                    userId,
+                    courseId
+                },
+                include: [
+                    {
+                        model: CourseModel,
+                        as: "course_details",
+                        required: false
+                    },
+                    {
+                        model: UserModel,
+                        as: "user_details",
+                        required: false
+                    }
+                ]
+            })
+
+            const courseTitle = enrollmentDetail?.course_details?.title
+            const userEmail = enrollmentDetail?.user_details?.email
+
+            sendCourseEnrolled(userEmail, courseTitle)
+
+            res.status(201).send({
+                message: 'Enrolled successful'
+            });
+        } catch (error) {
+            console.log(error, "error")
+            res.status(500).send({
+                message: 'Internal server error'
+            });
+        }
+    },
+
+    async getEnrolledCourse(req, res) {
+        const userId = req.sqlUID
+
+        const courseList = await UserCourse.findAll({
+            where: {
+                userId
+            },
+            include: [
+                {
+                    model: CourseModel,
+                    required: false,
+                    as: "course_details"
+                },
+                {
+                    model: UserModel,
+                    required: false,
+                    as: "user_details"
+                }
+            ]
+        })
+
+        res.send(courseList)
+    }
 }

@@ -26,14 +26,14 @@ export const CourseModel = db.define("Course", {
     },
     duration: {
         type: DataTypes.STRING,
-         allowNull: true
+        allowNull: true
     },
     instructor: {
-        type: DataTypes.STRING, 
-         allowNull: true
+        type: DataTypes.STRING,
+        allowNull: true
     },
     price: {
-        type: DataTypes.FLOAT, 
+        type: DataTypes.FLOAT,
         allowNull: true
     },
     rating: {
@@ -45,8 +45,11 @@ export const CourseModel = db.define("Course", {
         allowNull: true
     },
     lessons: {
-        type: DataTypes.JSON, 
-         allowNull: true
+        type: DataTypes.JSON,
+        allowNull: true
+    },
+    status: {
+        type: DataTypes.BOOLEAN
     },
     createdAt: {
         type: DataTypes.DATE,

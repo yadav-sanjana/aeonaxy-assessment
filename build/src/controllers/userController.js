@@ -8,10 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserController = void 0;
+exports.UserEnrollment = exports.UserController = void 0;
+const UserCourseModel_1 = require("../models/UserCourseModel");
 const UserModel_1 = require("../models/UserModel");
 const cloudinary_1 = require("cloudinary");
+const auth_1 = __importDefault(require("../middlewares/auth"));
+const CourseModel_1 = require("../models/CourseModel");
+const notificationFunctions_1 = require("../utils/notificationFunctions");
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
 exports.UserController = {
@@ -40,7 +47,51 @@ exports.UserController = {
         });
     },
     //get user by token (JWT) login system
-    // pass
+    userByToken(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = req.sqlUID;
+            const userDetail = yield UserModel_1.UserModel.findOne({
+                where: {
+                    id
+                }
+            });
+            if (!userDetail) {
+                return res.status(404).send({
+                    error: "User not Exists"
+                });
+            }
+            res.status(200).send(userDetail);
+        });
+    },
+    //generating jwt token for backend purpose
+    getUserToken(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const email = req.params.email;
+            try {
+                const exist = yield UserModel_1.UserModel.findOne({
+                    where: {
+                        email
+                    }
+                });
+                if (!exist) {
+                    return res.status(404).send({
+                        message: "User not found"
+                    });
+                }
+                const token = (0, auth_1.default)(exist === null || exist === void 0 ? void 0 : exist.get("id"), exist === null || exist === void 0 ? void 0 : exist.get("email"));
+                res.send({
+                    user: exist,
+                    token: token
+                });
+            }
+            catch (error) {
+                console.log(error, "error occured");
+                res.status(500).send({
+                    error: "Something went wrong"
+                });
+            }
+        });
+    },
     // get user lists
     getUsers(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -102,6 +153,7 @@ exports.UserController = {
                     password,
                     profile_pic: imageUrl
                 });
+                (0, notificationFunctions_1.sendRegistered)(email, name);
                 res.status(201).send(newUser);
             }
             catch (error) {
@@ -116,7 +168,7 @@ exports.UserController = {
     updateUser(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const id = req.params.id;
+                const id = req.query.id || req.sqlUID;
                 const { name, password } = req.body;
                 let imageUrl = '';
                 if (!passwordRegex.test(password)) {
@@ -193,6 +245,87 @@ exports.UserController = {
                     error: 'Internal server error'
                 });
             }
+        });
+    }
+};
+exports.UserEnrollment = {
+    enrollmentUser(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a, _b;
+            try {
+                const { courseId } = req.body;
+                const userId = req.sqlUID;
+                // Check if the user is already enrolled in the course
+                const existingEnrollment = yield UserCourseModel_1.UserCourse.findOne({
+                    where: {
+                        userId,
+                        courseId
+                    }
+                });
+                if (existingEnrollment) {
+                    return res.status(400).send({
+                        message: 'User is already enrolled in this course'
+                    });
+                }
+                //enrollment
+                yield UserCourseModel_1.UserCourse.create({
+                    userId,
+                    courseId
+                });
+                const enrollmentDetail = yield UserCourseModel_1.UserCourse.findOne({
+                    where: {
+                        userId,
+                        courseId
+                    },
+                    include: [
+                        {
+                            model: CourseModel_1.CourseModel,
+                            as: "course_details",
+                            required: false
+                        },
+                        {
+                            model: UserModel_1.UserModel,
+                            as: "user_details",
+                            required: false
+                        }
+                    ]
+                });
+                const courseTitle = (_a = enrollmentDetail === null || enrollmentDetail === void 0 ? void 0 : enrollmentDetail.course_details) === null || _a === void 0 ? void 0 : _a.title;
+                const userEmail = (_b = enrollmentDetail === null || enrollmentDetail === void 0 ? void 0 : enrollmentDetail.user_details) === null || _b === void 0 ? void 0 : _b.email;
+                (0, notificationFunctions_1.sendCourseEnrolled)(userEmail, courseTitle);
+                res.status(201).send({
+                    message: 'Enrolled successful'
+                });
+            }
+            catch (error) {
+                console.log(error, "error");
+                res.status(500).send({
+                    message: 'Internal server error'
+                });
+            }
+        });
+    },
+    getEnrolledCourse(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userId = req.sqlUID;
+            const courseList = yield UserCourseModel_1.UserCourse.findAll({
+                where: {
+                    userId
+                },
+                include: [
+                    {
+                        model: CourseModel_1.CourseModel,
+                        required: false,
+                        as: "course_details"
+                    },
+                    {
+                        model: UserModel_1.UserModel,
+                        required: false,
+                        as: "user_details"
+                    }
+                ]
+            });
+            res.send(courseList);
         });
     }
 };

@@ -50,6 +50,9 @@ exports.CourseModel = db_1.db.define("Course", {
         type: sequelize_1.DataTypes.JSON,
         allowNull: true
     },
+    status: {
+        type: sequelize_1.DataTypes.BOOLEAN
+    },
     createdAt: {
         type: sequelize_1.DataTypes.DATE,
         allowNull: false

@@ -32,6 +32,9 @@ exports.CourseController = {
                 res.status(201).send(newCourse);
             }
             catch (error) {
+                res.status(500).send({
+                    message: 'Internal server error'
+                });
             }
         });
     },
@@ -97,13 +100,30 @@ exports.CourseController = {
     // Update Course
     updateCourse(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            // pass
-        });
-    },
-    // Delete Course
-    deleteCourse(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // pass
+            try {
+                const id = req.params.id;
+                const updatedFields = req.body;
+                let updatedCourse = yield CourseModel_1.CourseModel.findOne({
+                    where: {
+                        id
+                    }
+                });
+                if (!updatedCourse) {
+                    return res.status(404).send({
+                        message: 'Course not found'
+                    });
+                }
+                // Updating course with req.body fields
+                yield updatedCourse.update(updatedFields);
+                res.status(200).send({
+                    message: "Course updated successfully"
+                });
+            }
+            catch (error) {
+                res.status(500).send({
+                    message: 'Internal server error'
+                });
+            }
         });
     }
 };
